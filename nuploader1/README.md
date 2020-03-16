@@ -1,0 +1,31 @@
+## 必要なもののインストール
+
+frontendディレクトリ内で、次コマンド
+
+```
+npm install
+```
+
+## テスト
+
+Rest Framework側のテスト(manage.pyと同じ階層で)
+
+```
+coverage run --source='nuploader1/' manage.py test
+coverage report -m --skip-covered
+```
+
+
+Vue側のテスト(frontendディレクトリ内で)
+
+```
+npx vue-cli-service test:unit
+```
+
+## ビルド
+
+frontendディレクトリ内で次コマンド
+
+```
+npm run build
+```
