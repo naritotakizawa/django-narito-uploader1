@@ -1,0 +1,6 @@
+include LICENSE
+include README.md
+recursive-include nuploader1/static *
+recursive-include nuploader1/templates *
+recursive-include nuploader1/frontend *
+recursive-include docs *
