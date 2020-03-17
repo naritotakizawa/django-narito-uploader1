@@ -10,7 +10,7 @@ Django REST frameworkとVueで作ったファイルアップローダー
 
 ```
 git clone https://github.com/naritotakizawa/django-narito-uploader1
-cd django-narito-blog2
+cd django-narito-uploader1
 pipenv install
 pipenv shell
 python manage.py migrate
