@@ -24,6 +24,8 @@ npx vue-cli-service test:unit
 
 ## ビルド
 
+Vueファイル等を変更し、それを本番環境に反映するにはビルドが必要です。
+
 frontendディレクトリ内で次コマンド
 
 ```

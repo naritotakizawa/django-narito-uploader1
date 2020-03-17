@@ -9,7 +9,7 @@ Django REST frameworkとVueで作ったファイルアップローダー
 リポジトリにサンプルプロジェクトを同封しているので、それを使って動かしたりできます。
 
 ```
-git clone https://github.com/naritotakizawa/django-narito-blog2
+git clone https://github.com/naritotakizawa/django-narito-uploader1
 cd django-narito-blog2
 pipenv install
 pipenv shell
