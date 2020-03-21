@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@(h-fr4r4-tu(@qz&4a%_wp%$t7@o*i10#k7qpu_vtsk=u*1#t'
+SECRET_KEY = 'ot#-9+^c8)y93tzy#v(%j3#$yv$zo@t+mn7shth^901_i!6g8b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,14 +31,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'nuploader1.apps.Nuploader1Config',  # これ
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'  # これ
+    'django_cleanup.apps.CleanupConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -121,14 +121,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# メディアファイルの設定
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-if DEBUG:
-    INSTALLED_APPS += ['corsheaders']
-    MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware'] + MIDDLEWARE
-    CORS_ORIGIN_WHITELIST = (
-        'http://127.0.0.1:8080',
-        'http://localhost:8080',
-    )
-    CORS_ALLOW_CREDENTIALS = True
