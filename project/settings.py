@@ -31,14 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'nuploader1.apps.Nuploader1Config',  # これ
+    'nuploader1.apps.Nuploader1Config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'  # これ
+    'django_cleanup.apps.CleanupConfig',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

@@ -8,9 +8,9 @@ verify_ssl = true
 [packages]
 django = "*"
 djangorestframework = "*"
-pillow = "*"
 django-cors-headers = "*"
 coverage = "*"
+django-cleanup = "*"
 
 [requires]
 python_version = "3.7"

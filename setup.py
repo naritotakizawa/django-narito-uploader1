@@ -15,7 +15,7 @@ setup(
     author_email='toritoritorina@gmail.com',
     url='https://github.com/naritotakizawa/django-narito-uploader1/',
     packages=find_packages(exclude=('tests', 'project')),
-    install_requires=('django', 'djangorestframework', 'pillow'),
+    install_requires=('djangorestframework', 'django-cleanup'),
     include_package_data=True,
     license='MIT',
 )
