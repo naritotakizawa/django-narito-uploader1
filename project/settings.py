@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'nuploader1.apps.Nuploader1Config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
