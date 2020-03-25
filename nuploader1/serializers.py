@@ -76,11 +76,3 @@ class CompositeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('ディレクトリの時は、ファイルを添付しないでください')
 
         return attrs
-
-    """
-    def get_fields(self):
-        fields = super().get_fields()
-        if self._context['request'].method == 'GET':
-            fields['parent'] = SimpleCompositeSerializer(read_only=True)
-        return fields
-    """
