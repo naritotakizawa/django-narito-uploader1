@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import Composite
+from .serializers import CompositeSerializer
 
-# Create your views here.
+
+class CompositeViewSet(viewsets.ModelViewSet):
+    queryset = Composite.objects.all()
+    serializer_class = CompositeSerializer
