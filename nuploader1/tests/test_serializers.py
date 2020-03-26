@@ -98,8 +98,8 @@ class TestCompositeSerializer(TestCase):
             'parent': 1,
         }
         serializer = CompositeSerializer(data=input_data)
-        with self.assertRaises(Http404):
-            serializer.is_valid()
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertEqual(str(serializer.errors['parent'][0]), '主キー "1" は不正です - データが存在しません。',)
 
     def test_input_invalid_if_parent_is_file(self):
         input_data = {
@@ -118,8 +118,26 @@ class TestCompositeSerializer(TestCase):
         }
         serializer = CompositeSerializer(data=input_data)
         self.assertEqual(serializer.is_valid(), False)
-        self.assertEqual(str(serializer.errors['non_field_errors'][0]), 'ファイルを親に指定することはできません')
+        self.assertEqual(str(serializer.errors['parent'][0]), '主キー "1" は不正です - データが存在しません。',)
 
+    def test_input_invalid_if_parent_is_string(self):
+        input_data = {
+            'name': 'hello.txt',
+            'is_dir': False,
+            'src': ContentFile(b'hello', 'hello.txt'),
+        }
+        serializer = CompositeSerializer(data=input_data)
+        self.assertEqual(serializer.is_valid(), True)
+        serializer.save()
+
+        input_data = {
+            'name': 'hello',
+            'is_dir': True,
+            'parent': 'test',
+        }
+        serializer = CompositeSerializer(data=input_data)
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertEqual(str(serializer.errors['parent'][0]), '不正な型です。str 型ではなく主キーの値を入力してください。',)
 
     def test_input_invalid_if_parent_is_self(self):
         input_data = {

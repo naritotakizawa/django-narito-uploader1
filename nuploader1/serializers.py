@@ -1,5 +1,6 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import serializers, relations
+from django.core.exceptions import ObjectDoesNotExist
+from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers
 from .models import Composite
 
 
@@ -10,13 +11,22 @@ class SimpleCompositeSerializer(serializers.ModelSerializer):
         fields = ('pk', 'name', 'is_dir', 'zip_depth', 'parent')
 
 
-class SimpleCompositeRelation(relations.RelatedField):
+class SimpleCompositeRelation(serializers.RelatedField):
+    default_error_messages = {
+        'does_not_exist': _('Invalid pk "{pk_value}" - object does not exist.'),
+        'incorrect_type': _('Incorrect type. Expected pk value, received {data_type}.'),
+    }
 
     def to_representation(self, value):
         return SimpleCompositeSerializer(value).data
 
     def to_internal_value(self, data):
-        return get_object_or_404(Composite, pk=data)
+        try:
+            return self.get_queryset().get(pk=data)
+        except ObjectDoesNotExist:
+            self.fail('does_not_exist', pk_value=data)
+        except (TypeError, ValueError):
+            self.fail('incorrect_type', data_type=type(data).__name__)
 
     def get_choices(self, cutoff=None):
         queryset = self.get_queryset()
@@ -65,9 +75,6 @@ class CompositeSerializer(serializers.ModelSerializer):
             same_names = same_names.exclude(pk=self.instance.pk)
         if same_names.exists():
             raise serializers.ValidationError('同じ名前のファイル・ディレクトリが既に存在します')
-
-        if parent and not parent.is_dir:
-            raise serializers.ValidationError('ファイルを親に指定することはできません')
 
         if not is_dir and not src:  # 基本的にはこない
             raise serializers.ValidationError('ファイルの時は、ファイルを添付してください')
