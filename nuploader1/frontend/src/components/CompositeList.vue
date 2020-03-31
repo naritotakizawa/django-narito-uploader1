@@ -1,10 +1,26 @@
 <template>
-    <h2>Compositeの一覧を表示する予定</h2>
+    <section id="composites">
+        <p v-for="composite of compositeList" :key="composite.pk">{{ composite.name }}</p>
+    </section>
 </template>
 
 <script>
     export default {
-        name: 'composite-list'
+        name: 'composite-list',
+        data() {
+            return {
+                compositeList: {},
+            }
+        },
+        created() {
+            this.$http(this.$endpoint)
+                .then(response => {
+                    return response.json()
+                })
+                .then(data => {
+                    this.compositeList = data
+                })
+        }
     }
 </script>
 

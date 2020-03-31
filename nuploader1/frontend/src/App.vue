@@ -4,7 +4,7 @@
             <img src="@/assets/logo.svg" id="header-logo">
         </header>
         <main id="main">
-            <router-view/>
+            <router-view />
         </main>
 
     </div>
