@@ -1,7 +1,8 @@
-from rest_framework import permissions, viewsets
+from rest_framework import generics, permissions, viewsets
 from rest_framework.response import Response
 from .models import Composite
 from .serializers import CompositeSerializer
+from .utils import get_composite
 
 
 class CompositeViewSet(viewsets.ModelViewSet):
@@ -19,3 +20,13 @@ class CompositeViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class GetCompositeFromPath(generics.RetrieveAPIView):
+    queryset = Composite.objects.all()
+    serializer_class = CompositeSerializer
+
+    def get_object(self):
+        request_path = self.kwargs['request_path']
+        composite = get_composite(request_path)
+        return composite

@@ -6,9 +6,10 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/home/:path*',
     name: 'home',
     component: CompositeList,
+    props: true,
   }
 ]
 
