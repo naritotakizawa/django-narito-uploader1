@@ -169,7 +169,7 @@ class TestGetCompositeFromPath(APITestCase):
         composite1 = Composite.objects.create(pk=1, name='hello', is_dir=True, parent=None)
         composite2 = Composite.objects.create(pk=2, name='world', is_dir=True, parent=composite1)
         composite3 = Composite.objects.create(pk=3, name='django', is_dir=True, parent=composite2)
-        response = self.client.get(resolve_url('nuploader1:composites-frompath', request_path='/hello/world/django/'))
+        response = self.client.get(resolve_url('nuploader1:composites_frompath', request_path='/hello/world/django/'))
         self.assertEqual(Composite.objects.count(), 3)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertJSONEqual(
@@ -186,7 +186,7 @@ class TestGetCompositeFromPath(APITestCase):
 
     def test_get_failure(self):
         composite1 = Composite.objects.create(pk=1, name='hello', is_dir=True, parent=None)
-        response = self.client.get(resolve_url('nuploader1:composites-frompath', request_path='/aaaa/'))
+        response = self.client.get(resolve_url('nuploader1:composites_frompath', request_path='/aaaa/'))
         self.assertEqual(Composite.objects.count(), 1)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertJSONEqual(response.content, {"detail": "見つかりませんでした。"})

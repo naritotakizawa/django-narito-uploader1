@@ -152,7 +152,7 @@
             },
 
             moveTop() {
-                this.$router.push({name: 'list', params: {path: ''}})
+                this.$router.push({name: 'home', params: {path: ''}})
             },
 
             update(composite) {
