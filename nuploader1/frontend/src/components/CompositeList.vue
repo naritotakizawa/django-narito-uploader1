@@ -28,7 +28,7 @@
     export default {
         name: 'composite-list',
         props: {
-          path: {type: String},
+            path: {type: String},
         },
         data() {
             return {
