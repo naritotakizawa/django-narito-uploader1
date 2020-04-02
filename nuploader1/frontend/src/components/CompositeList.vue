@@ -141,17 +141,17 @@
                 this.selected.data = composite
                 this.selected.type = 'delete'
             },
-            createFile(composite) {
+            createFile() {
                 this.selected.data = {
                     is_dir: false,
-                    parent: composite.pk ? composite.pk : '',
+                    parent: this.current.pk ? this.current.pk : '',
                 }
                 this.selected.type = 'new'
             },
-            createDir(composite) {
+            createDir() {
                 this.selected.data = {
                     is_dir: true,
-                    parent: composite.pk ? composite.pk : '',
+                    parent: this.current.pk ? this.current.pk : '',
                 }
                 this.selected.type = 'new'
             },
