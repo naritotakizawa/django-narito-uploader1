@@ -73,11 +73,16 @@
                     })
             },
             getNextPath(composite) {
-                let path = composite.name
-                if (composite.is_dir) {
-                    path = path + '/'
+                let basePath = this.$route.path
+                if (!basePath.endsWith('/')) {
+                    basePath = basePath + '/'
                 }
-                return path
+
+                let nextPath = basePath + composite.name
+                if (composite.is_dir) {
+                    nextPath = nextPath + '/'
+                }
+                return nextPath
             },
             getBeforePath() {
                 const paths = []
