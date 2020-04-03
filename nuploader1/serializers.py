@@ -54,17 +54,10 @@ class CompositeSerializer(serializers.ModelSerializer):
         model = Composite
         fields = ('pk', 'name', 'is_dir', 'src', 'parent', 'zip_depth', 'composite_set')
 
-    def get_attr(self, name, attrs):
-        value = attrs.get(name)
-        if value is None and self.instance:
-            value = getattr(self.instance, name)
-        return value
-
     def validate(self, attrs):
-        parent = self.get_attr('parent', attrs)
-        name = self.get_attr('name', attrs)
-        is_dir = self.get_attr('is_dir', attrs)
-        src = self.get_attr('src', attrs)
+        parent = attrs['parent']
+        name = attrs['name']
+        is_dir = attrs['is_dir']
 
         if (self.instance and parent) and (parent.pk == self.instance.pk):
             raise serializers.ValidationError('親ディレクトリが自分です')
@@ -76,10 +69,26 @@ class CompositeSerializer(serializers.ModelSerializer):
         if same_names.exists():
             raise serializers.ValidationError('同じ名前のファイル・ディレクトリが既に存在します')
 
-        if not is_dir and not src:  # 基本的にはこない
-            raise serializers.ValidationError('ファイルの時は、ファイルを添付してください')
+        # ファイルの送信処理があった
+        if 'src' in attrs:
+            src = attrs['src']
+            # 送られたファイルの中身があり、ディレクトリ指定
+            if is_dir and src:
+                raise serializers.ValidationError('ディレクトリの時は、ファイルを添付しないでください')
 
-        if is_dir and src:  # 基本的にはこない
-            raise serializers.ValidationError('ディレクトリの時は、ファイルを添付しないでください')
+            # ファイルフラグだが、ファイルの中身は空
+            if not is_dir and not src:
+                raise serializers.ValidationError('ファイルの時は、ファイルを添付してください')
 
+        # ファイルの送信はなかった
+        else:
+            if not self.instance:
+                # ファイルの送信はなかったのに、ファイルフラグ
+                if not is_dir:
+                    raise serializers.ValidationError('ファイルの時は、ファイルを添付してください')
+            else:
+                src = self.instance.src
+                # ファイルの送信はなかったし、アップロード済みでもないのにファイルフラグ
+                if not is_dir and not src:
+                    raise serializers.ValidationError('ファイルの時は、ファイルを添付してください')
         return attrs

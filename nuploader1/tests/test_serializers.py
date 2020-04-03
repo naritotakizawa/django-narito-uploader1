@@ -106,6 +106,7 @@ class TestCompositeSerializer(TestCase):
             'name': 'hello.txt',
             'is_dir': False,
             'src': ContentFile(b'hello', 'hello.txt'),
+            'parent': None,
         }
         serializer = CompositeSerializer(data=input_data)
         self.assertEqual(serializer.is_valid(), True)
@@ -125,6 +126,7 @@ class TestCompositeSerializer(TestCase):
             'name': 'hello.txt',
             'is_dir': False,
             'src': ContentFile(b'hello', 'hello.txt'),
+            'parent': None,
         }
         serializer = CompositeSerializer(data=input_data)
         self.assertEqual(serializer.is_valid(), True)
@@ -143,6 +145,7 @@ class TestCompositeSerializer(TestCase):
         input_data = {
             'name': 'hello',
             'is_dir': True,
+            'parent': None,
         }
         serializer = CompositeSerializer(data=input_data)
         self.assertEqual(serializer.is_valid(), True)
@@ -161,6 +164,7 @@ class TestCompositeSerializer(TestCase):
         input_data = {
             'name': 'hello',
             'is_dir': True,
+            'parent': None,
         }
         serializer = CompositeSerializer(data=input_data)
         self.assertEqual(serializer.is_valid(), True)
@@ -169,6 +173,7 @@ class TestCompositeSerializer(TestCase):
         input_data = {
             'name': 'hello',
             'is_dir': True,
+            'parent': None,
         }
         serializer = CompositeSerializer(data=input_data)
         self.assertEqual(serializer.is_valid(), False)
@@ -178,16 +183,51 @@ class TestCompositeSerializer(TestCase):
         input_data = {
             'name': 'hello.txt',
             'is_dir': False,
+            'parent': None,
         }
         serializer = CompositeSerializer(data=input_data)
         self.assertEqual(serializer.is_valid(), False)
         self.assertEqual(str(serializer.errors['non_field_errors'][0]), 'ファイルの時は、ファイルを添付してください')
+
+    def test_input_invalid_if_empty_file(self):
+        input_data = {
+            'name': 'hello.txt',
+            'is_dir': False,
+            'src': None,
+            'parent': None,
+        }
+        serializer = CompositeSerializer(data=input_data)
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertEqual(str(serializer.errors['non_field_errors'][0]), 'ファイルの時は、ファイルを添付してください')
+
+    def test_input_invalid_if_change_no_file(self):
+        input_data = {
+            'name': 'hello',
+            'is_dir': True,
+            'src': None,
+            'parent': None,
+        }
+        serializer = CompositeSerializer(data=input_data)
+        self.assertEqual(serializer.is_valid(), True)
+        data = serializer.save()
+
+        input_data = {
+            'pk': 1,
+            'name': 'hello',
+            'is_dir': False,
+            'parent': None,
+        }
+        serializer = CompositeSerializer(data=input_data, instance=data)
+        self.assertEqual(serializer.is_valid(), False)
+        self.assertEqual(str(serializer.errors['non_field_errors'][0]), 'ファイルの時は、ファイルを添付してください')
+
 
     def test_input_invalid_if_dir_has_file(self):
         input_data = {
             'name': 'hello.txt',
             'is_dir': True,
             'src': ContentFile(b'hello', 'hello.txt'),
+            'parent': None,
         }
         serializer = CompositeSerializer(data=input_data)
         self.assertEqual(serializer.is_valid(), False)
