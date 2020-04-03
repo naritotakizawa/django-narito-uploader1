@@ -66,9 +66,7 @@
                         formData.append('src', file);
                     }
                 }
-                if (this.selected.data.parent) {
-                    formData.append('parent', this.selected.data.parent);
-                }
+                formData.append('parent', this.selected.data.parent)
                 this.$http(this.$endpoint, {
                     credentials: "include",
                     method: 'POST',
