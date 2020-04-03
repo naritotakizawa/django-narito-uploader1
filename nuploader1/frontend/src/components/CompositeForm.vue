@@ -55,14 +55,116 @@
         },
         methods: {
             add() {
-                this.$emit('done')
+                const formData = new FormData();
+                formData.append('name', this.form.name);
+                formData.append('is_dir', this.selected.data.is_dir);
+                if (this.selected.data.is_dir) {
+                    formData.append('zip_depth', this.form.zip_depth);
+                } else {
+                    const file = this.$refs.upfile.files[0]
+                    if (file) {
+                        formData.append('src', file);
+                    }
+                }
+                if (this.selected.data.parent) {
+                    formData.append('parent', this.selected.data.parent);
+                }
+                this.$http(this.$endpoint, {
+                    credentials: "include",
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': this.$csrfToken,
+                    },
+                }).then(response => {
+                    if (response.ok) {
+                        return response.json().then(() => {
+                            this.$notify({
+                                title: 'お知らせ',
+                                message: this.$createElement('p', {style: 'color: #009'}, this.form.name + 'を追加しました'),
+                                duration: 2000
+                            })
+                            this.$emit('done')
+                        })
+                    } else {
+                        return response.json().then(data => {
+                            this.$notify({
+                                title: 'お知らせ',
+                                message: this.$createElement('p', {style: 'color: #900'}, JSON.stringify(data)),
+                                duration: 2000
+                            })
+                        })
+                    }
+                });
             },
             update() {
-                this.$emit('done')
+                const formData = new FormData();
+                formData.append('name', this.form.name);
+                formData.append('is_dir', this.selected.data.is_dir);
+                if (this.selected.data.is_dir) {
+                    formData.append('zip_depth', this.form.zip_depth);
+                } else {
+                    const file = this.$refs.upfile.files[0]
+                    if (file) {
+                        formData.append('src', file);
+                    }
+                }
+                formData.append('parent', this.form.parent);
+                this.$http(this.$endpoint + this.selected.data.pk + '/', {
+                    credentials: "include",
+                    method: 'PATCH',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': this.$csrfToken,
+                    },
+                }).then(response => {
+                    if (response.ok) {
+                        return response.json().then(() => {
+                            this.$notify({
+                                title: 'お知らせ',
+                                message: this.$createElement('p', {style: 'color: #009'}, this.form.name + 'を更新しました'),
+                                duration: 2000
+                            })
+                            this.$emit('done')
+                        })
+                    } else {
+                        return response.json().then(data => {
+                            this.$notify({
+                                title: 'お知らせ',
+                                message: this.$createElement('p', {style: 'color: #900'}, JSON.stringify(data)),
+                                duration: 2000
+                            })
+                        })
+                    }
+                });
             },
             remove() {
-                this.$emit('done')
+                this.$http(this.$endpoint + this.selected.data.pk + '/', {
+                    credentials: "include",
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': this.$csrfToken,
+                    },
+                }).then(response => {
+                    if (response.ok) {
+                        this.$notify({
+                            title: 'お知らせ',
+                            message: this.$createElement('p', {style: 'color: #009'}, this.selected.data.name + 'を削除しました'),
+                            duration: 2000
+                        })
+                        this.$emit('done')
+                    } else {
+                        return response.json().then(data => {
+                            this.$notify({
+                                title: 'お知らせ',
+                                message: this.$createElement('p', {style: 'color: #900'}, JSON.stringify(data)),
+                                duration: 2000
+                            })
+                        })
+                    }
+                });
             },
+
             close() {
                 this.$emit('close')
             }
