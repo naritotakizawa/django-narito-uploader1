@@ -1,9 +1,7 @@
 <template>
     <div id="app">
         <header id="side">
-            <router-link :to="{name:'home'}">
-                <img src="@/assets/logo.svg" id="header-logo">
-            </router-link>
+            <img src="@/assets/logo.svg" id="header-logo">
         </header>
         <main id="main">
             <router-view/>
