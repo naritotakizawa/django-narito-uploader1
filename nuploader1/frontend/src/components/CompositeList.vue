@@ -130,7 +130,7 @@
             move(composite) {
                 const nextPath = this.getNextPath(composite)
                 if (!composite.is_dir) {
-                    window.open(`http://127.0.0.1:8000/uploader${nextPath}`, '_blank')
+                    window.open(this.$fileUrlBase + nextPath, '_blank')
                 } else {
                     this.$router.push(nextPath)
                     this.getCompositeListFromPk(composite.pk)
@@ -168,7 +168,7 @@
                 }
             },
             zipUrl(composite) {
-                return `http://127.0.0.1:8000/uploader/zip/${composite.pk}`
+                return this.$zipUrlBase + composite.pk + '/'
             },
            close() {
                 this.selected.data = {}

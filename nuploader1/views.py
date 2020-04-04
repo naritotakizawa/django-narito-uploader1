@@ -2,7 +2,7 @@ import mimetypes
 import os
 import zipfile
 from django.http import FileResponse, HttpResponseNotModified, HttpResponseBadRequest, HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils.http import http_date
 from django.views.static import was_modified_since
 from rest_framework import generics, permissions, viewsets
@@ -39,7 +39,10 @@ class GetCompositeFromPath(generics.RetrieveAPIView):
         return composite
 
 
-def serve(request, request_path):
+def serve(request, request_path=None):
+    if request_path is None or request_path.endswith('/'):
+        return render(request, 'nuploader1/index.html')
+
     composite = get_composite(request_path)
     statobj = os.stat(composite.src.path)
     if not was_modified_since(request.META.get('HTTP_IF_MODIFIED_SINCE'),
