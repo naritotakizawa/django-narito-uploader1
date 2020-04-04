@@ -24,7 +24,7 @@
             <div class="child composite-wrapper" v-for="composite of current.composite_set" :key="composite.pk">
                 <Composite :data="composite"
                            @click="move" @remove="remove"
-                           @update="update" @zip="zip" :editable="true"></Composite>
+                           @update="update" :zipUrl="zipUrl(composite)" :editable="true"></Composite>
 
             </div>
         </div>
@@ -130,7 +130,7 @@
             move(composite) {
                 const nextPath = this.getNextPath(composite)
                 if (!composite.is_dir) {
-                    window.open(nextPath, '_blank');
+                    window.open(`http://127.0.0.1:8000/uploader${nextPath}`, '_blank')
                 } else {
                     this.$router.push(nextPath)
                     this.getCompositeListFromPk(composite.pk)
@@ -167,8 +167,8 @@
                     this.getCompositeListTop()
                 }
             },
-            zip(composite) {
-                window.open(`/uploader/zip/${composite.pk}`, '_blank');
+            zipUrl(composite) {
+                return `http://127.0.0.1:8000/uploader/zip/${composite.pk}`
             },
            close() {
                 this.selected.data = {}

@@ -20,9 +20,9 @@
             <button type="button" @click="remove" class="img-button delete">
                 <img src="@/assets/delete.svg" class="delete-button-icon">
             </button>
-            <button type="button" @click="zip" v-if="data.zip_depth" class="img-button zip">
+            <a v-if="data.zip_depth" class="img-button zip" :href="zipUrl">
                 <img src="@/assets/zip.svg" class="zip-button-icon">
-            </button>
+            </a>
         </template>
 
     </div>
@@ -35,8 +35,8 @@
             data: {type: Object},
             editable: {type: Boolean, default: false},
             editableIn: {type: Boolean, default: false},
+            zipUrl: {type: String},
         },
-
         methods: {
             onclick() {
                 this.$emit('click', this.data)
@@ -46,9 +46,6 @@
             },
             remove() {
                 this.$emit('remove', this.data)
-            },
-            zip() {
-                this.$emit('zip', this.data)
             },
             createFile() {
                 this.$emit('createFile', this.data)
