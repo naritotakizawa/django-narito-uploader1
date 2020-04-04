@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <header id="side">
-            <router-link :to="{name:'list', params:{path: ''}}">
+            <router-link :to="{name:'home'}">
                 <img src="@/assets/logo.svg" id="header-logo">
             </router-link>
         </header>
@@ -40,7 +40,6 @@
         background-color: #eee;
     }
 
-
     #header-logo {
         width: 150px;
     }
@@ -63,8 +62,5 @@
             grid-column: 2;
             padding: 20px;
         }
-
-
     }
-
 </style>

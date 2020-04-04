@@ -7,7 +7,7 @@
                 <Composite :data="current.parent" @click="moveBefore"></Composite>
             </div>
             <div v-else-if="current.pk" class="parent composite-wrapper" :key="-1">
-                <Composite :data="{name: 'home', is_dir: 'true'}" @click="moveTop"></Composite>
+                <Composite :data="{name: 'home', is_dir: 'true'}" @click="moveBefore"></Composite>
             </div>
 
             <!-- カレントディレクトリの表示 -->
@@ -24,7 +24,7 @@
             <div class="child composite-wrapper" v-for="composite of current.composite_set" :key="composite.pk">
                 <Composite :data="composite"
                            @click="move" @remove="remove"
-                           @update="update" @zip="zip" :editable="true"></Composite>
+                           @update="update" :zipUrl="zipUrl(composite)" :editable="true"></Composite>
 
             </div>
         </div>
@@ -40,7 +40,7 @@
 
 <script>
     import Composite from "./Composite.vue";
-    import CompositeForm from "./CompositeForm";
+    import CompositeForm from "./CompositeForm"
 
     export default {
         name: 'composite-list',
@@ -57,21 +57,6 @@
                     type: null,
                     data: {}
                 },
-                nextPk: null,
-            }
-        },
-        watch: {
-            '$route'() {
-                if (this.nextPk) {
-                    this.getCompositeListFromPk(this.nextPk)
-                } else {
-                    this.getCompositeListTop()
-                }
-                this.nextPk = null
-                this.selected = {
-                    type: null,
-                    data: {}
-                }
             }
         },
         created() {
@@ -112,13 +97,17 @@
                     })
             },
             getNextPath(composite) {
-                let path = composite.name
-                if (composite.is_dir) {
-                    path = path + '/'
+                let basePath = this.$route.path
+                if (!basePath.endsWith('/')) {
+                    basePath = basePath + '/'
                 }
-                return path
-            },
 
+                let nextPath = basePath + composite.name
+                if (composite.is_dir) {
+                    nextPath = nextPath + '/'
+                }
+                return nextPath
+            },
             getBeforePath() {
                 const paths = []
                 for (const path of this.$route.path.split('/')) {
@@ -129,61 +118,46 @@
                 paths.pop()
                 return '/' + paths.join('/') + '/'
             },
-
             moveBefore() {
-                if (this.current.pk) {
-                    if (this.current.parent) {
-                        this.nextPk = this.current.parent.pk
-                    } else {
-                        this.nextPk = null
-                    }
-                    const beforePath = this.getBeforePath()
-                    this.$router.push(beforePath)
+                const beforePath = this.getBeforePath()
+                this.$router.push(beforePath)
+                if (this.current.parent) {
+                    this.getCompositeListFromPk(this.current.parent.pk)
+                } else {
+                    this.getCompositeListTop()
                 }
             },
             move(composite) {
                 const nextPath = this.getNextPath(composite)
                 if (!composite.is_dir) {
-                    window.open(nextPath, '_blank');
+                    window.open(this.$fileUrlBase + nextPath, '_blank')
                 } else {
-                    this.nextPk = composite.pk
                     this.$router.push(nextPath)
+                    this.getCompositeListFromPk(composite.pk)
                 }
             },
-
-            moveTop() {
-                this.$router.push({name: 'home', params: {path: ''}})
-            },
-
             update(composite) {
                 this.selected.data = composite
                 this.selected.type = 'update'
-
             },
-
             remove(composite) {
                 this.selected.data = composite
                 this.selected.type = 'delete'
             },
-
             createFile(composite) {
                 this.selected.data = {
                     is_dir: false,
                     parent: composite.pk ? composite.pk : '',
-                    type: 'new',
                 }
                 this.selected.type = 'new'
             },
-
             createDir(composite) {
                 this.selected.data = {
                     is_dir: true,
                     parent: composite.pk ? composite.pk : '',
-                    type: 'new',
                 }
                 this.selected.type = 'new'
             },
-
             reload() {
                 this.selected.type = null
                 this.selected.data = {}
@@ -193,30 +167,23 @@
                     this.getCompositeListTop()
                 }
             },
-
-
-            zip(composite) {
-                window.open(`/uploader/zip/${composite.pk}`, '_blank');
+            zipUrl(composite) {
+                return this.$zipUrlBase + composite.pk + '/'
             },
-
-            close() {
+           close() {
                 this.selected.data = {}
                 this.selected.type = null
             }
-
         },
-
 
     }
 </script>
 
 
 <style scoped>
-
     .composite-wrapper {
         margin-bottom: 50px;
     }
-
 
     .current {
         background-color: #eee;
@@ -232,7 +199,6 @@
         padding: 10px;
     }
 
-
     @media (min-width: 1024px) {
         #composites {
             padding-top: 120px;
@@ -245,7 +211,6 @@
         .child {
             margin-left: 100px;
         }
-
     }
 
     @media (min-width: 1366px) {
@@ -263,7 +228,6 @@
             grid-column: 2;
             justify-self: center;
             margin-top: 100px;
-
             position: static;
             top: 0;
             left: 0;
@@ -273,6 +237,4 @@
             box-shadow: none;
         }
     }
-
 </style>
-

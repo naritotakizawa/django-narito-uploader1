@@ -29,7 +29,7 @@ def get_composite(request_path):
         return composite
 
 
-def walk_and_write(composite, zip_file, count, dir_name=''):
+def walk_and_write_zip(composite, zip_file, count, dir_name=''):
     """再帰的にCompositeを走査し、zipファイルに書き込んでいく"""
     dirs = []
     for composite in composite.composite_set.all():
@@ -41,4 +41,4 @@ def walk_and_write(composite, zip_file, count, dir_name=''):
 
     if count:
         for composite in dirs:
-            walk_and_write(composite, zip_file, count, f'{dir_name}{composite.name}/')
+            walk_and_write_zip(composite, zip_file, count, f'{dir_name}{composite.name}/')

@@ -42,6 +42,7 @@ class TestCompositeViewSet(APITestCase):
         data = {
             'name': 'test',
             'is_dir': True,
+            'parent': None,
         }
         response = self.client.post(resolve_url('nuploader1:composites-list'), data, format='json')
 
@@ -92,6 +93,8 @@ class TestCompositeViewSet(APITestCase):
         composite1 = Composite.objects.create(name='hello', parent=None, is_dir=True, zip_depth=5)
         data = {
             'name': 'world',
+            'parent': None,
+            'is_dir': True,
         }
         response = self.client.patch(resolve_url('nuploader1:composites-detail', pk=1), data, format='json')
         self.assertEqual(Composite.objects.count(), 1)
@@ -113,7 +116,9 @@ class TestCompositeViewSet(APITestCase):
         self.client.login(username='user', password='password')
         composite1 = Composite.objects.create(name='hello', parent=None, is_dir=True, zip_depth=5)
         data = {
+            'name': 'hello',
             'is_dir': False,
+            'parent': None,
         }
         response = self.client.patch(resolve_url('nuploader1:composites-detail', pk=1), data, format='json')
         self.assertEqual(Composite.objects.count(), 1)
@@ -127,6 +132,8 @@ class TestCompositeViewSet(APITestCase):
         composite1 = Composite.objects.create(name='hello', parent=None, is_dir=True, zip_depth=5)
         data = {
             'name': 'world',
+            'is_dir': True,
+            'parent': None,
         }
         response = self.client.patch(resolve_url('nuploader1:composites-detail', pk=1), data, format='json')
         self.assertEqual(Composite.objects.count(), 1)
@@ -195,25 +202,25 @@ class TestGetCompositeFromPath(APITestCase):
 class TestTop(TestCase):
 
     def test_get_success(self):
-        response = self.client.get(resolve_url('nuploader1:top'))
+        response = self.client.get(resolve_url('nuploader1:serve'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, 'N Uploader1')
 
     def test_get_dir(self):
         composite1 = Composite.objects.create(pk=1, name='hello', is_dir=True, parent=None)
-        response = self.client.get(resolve_url('nuploader1:path', request_path='/hello/'))
+        response = self.client.get(resolve_url('nuploader1:serve', request_path='/hello/'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertContains(response, 'N Uploader1')
 
     def test_get_dir2(self):
         """存在しないパスでも、ディレクトリっぽければ200でhtmlを返す"""
         composite1 = Composite.objects.create(pk=1, name='hello', is_dir=True, parent=None)
-        response = self.client.get(resolve_url('nuploader1:path', request_path='/aaaaaaaaaaaaa/'))
+        response = self.client.get(resolve_url('nuploader1:serve', request_path='/aaaaaaaaaaaaa/'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_file(self):
         composite1 = Composite.objects.create(pk=1, name='hello.txt', is_dir=False, parent=None, src=ContentFile(b'hello', 'hello.txt'))
-        response = self.client.get(resolve_url('nuploader1:path', request_path='/hello.txt'))
+        response = self.client.get(resolve_url('nuploader1:serve', request_path='/hello.txt'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(list(response.streaming_content), [b'hello'])
 
@@ -250,4 +257,3 @@ class TestZip(TestCase):
         composite1 = Composite.objects.create(pk=1, name='depth1.txt', is_dir=False, parent=None, src=ContentFile(b'depth1', 'depth1.txt'))
         response = self.client.get(resolve_url('nuploader1:download_zip', pk=composite1.pk))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-

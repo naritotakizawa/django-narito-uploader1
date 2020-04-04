@@ -53,28 +53,27 @@ describe('Composite.vue', () => {
         expect(emit.remove[0][0].name).toBe('削除になってるはず')
     })
 
-    it('zipボタンのテスト', ()=> {
+    it('zipリンクのテスト', ()=> {
         const wrapper = shallowMount(Composite, {
             propsData: {
                 data: {pk: 1, name: 'zipになってるはず', zip_depth: 1, is_dir: true},
-                editable: true
+                editable: true,
+                zipUrl: 'dummy'
             }
         })
-        wrapper.find('.zip').trigger('click')
-        const emit = wrapper.emitted()
+       expect(wrapper.find('a.zip').attributes('href')).toBe('dummy')
 
-        expect(emit.zip).toBeTruthy()
-        expect(emit.zip[0][0].name).toBe('zipになってるはず')
     })
 
-    it('zipボタンのテスト(zipボタンがないケース)', ()=> {
+    it('zipリンクのテスト(zipリンクがないケース)', ()=> {
         const wrapper = shallowMount(Composite, {
             propsData: {
                 data: {pk: 1, name: 'なし', zip_depth: 1, is_dir: true},
                 editable: false
             }
         })
-        expect(wrapper.find('.zip').exists()).toBe(false)
+        expect(wrapper.find('a.zip').exists()).toBe(false)
+
     })
 
 })

@@ -1,38 +1,37 @@
 <template>
-        <form v-on:submit.prevent="remove" class="composite-form" v-if="selected.type==='delete'">
-            <p>{{ selected.data.name }}の削除</p>
-            <button type="submit">削除</button>
-            <button @click="close" class="button-link">閉じる</button>
-        </form>
-        <form v-on:submit.prevent="add" class="composite-form" v-else-if="selected.type==='new'">
-            <p>新規作成</p>
-            <input type="text" v-model="form.name" placeholder="名前">
-            <div v-if="selected.data.is_dir">
-                <input type="number" v-model="form.zip_depth" placeholder="ZIP階層">
-            </div>
-            <div v-else>
-                <input type="file" ref="upfile">
-            </div>
-            <button type="submit">送信</button>
-            <button @click="close" class="button-link">閉じる</button>
-        </form>
-        <form v-on:submit.prevent="update" class="composite-form" v-else-if="selected.type==='update'">
-            <p>{{ selected.data.name }}の更新</p>
-            <input type="text" v-model="form.name" placeholder="名前">
-            <input type="text" v-model="form.parent" placeholder="親ディレクトリID">
-            <div v-if="selected.data.is_dir">
-                <input type="number" v-model="form.zip_depth" placeholder="ZIP階層">
-            </div>
-            <div v-else>
-                <input type="file" ref="upfile">
-            </div>
-            <button type="submit">更新</button>
-            <button @click="close" class="button-link">閉じる</button>
-        </form>
+    <form @submit.prevent="remove" class="composite-form" v-if="selected.type==='delete'">
+        <p>{{ selected.data.name }}の削除</p>
+        <button type="submit">削除</button>
+        <button @click="close" class="button-link">閉じる</button>
+    </form>
+    <form @submit.prevent="add" class="composite-form" v-else-if="selected.type==='new'">
+        <p>新規作成</p>
+        <input type="text" v-model="form.name" placeholder="名前">
+        <div v-if="selected.data.is_dir">
+            <input type="number" v-model="form.zip_depth" placeholder="ZIP階層">
+        </div>
+        <div v-else>
+            <input type="file" ref="upfile">
+        </div>
+        <button type="submit">送信</button>
+        <button @click="close" class="button-link">閉じる</button>
+    </form>
+    <form @submit.prevent="update" class="composite-form" v-else-if="selected.type==='update'">
+        <p>{{ selected.data.name }}の更新</p>
+        <input type="text" v-model="form.name" placeholder="名前">
+        <input type="text" v-model="form.parent" placeholder="親ディレクトリID">
+        <div v-if="selected.data.is_dir">
+            <input type="number" v-model="form.zip_depth" placeholder="ZIP階層">
+        </div>
+        <div v-else>
+            <input type="file" ref="upfile">
+        </div>
+        <button type="submit">更新</button>
+        <button @click="close" class="button-link">閉じる</button>
+    </form>
 </template>
 
 <script>
-
     export default {
         name: 'composite-form',
         props: {
@@ -66,11 +65,8 @@
                     if (file) {
                         formData.append('src', file);
                     }
-
                 }
-                if (this.selected.data.parent) {
-                    formData.append('parent', this.selected.data.parent);
-                }
+                formData.append('parent', this.selected.data.parent)
                 this.$http(this.$endpoint, {
                     credentials: "include",
                     method: 'POST',
@@ -88,17 +84,17 @@
                             })
                             this.$emit('done')
                         })
-                    }
-                    return response.json().then(data => {
-                        this.$notify({
-                            title: 'お知らせ',
-                            message: this.$createElement('p', {style: 'color: #900'}, JSON.stringify(data)),
-                            duration: 2000
+                    } else {
+                        return response.json().then(data => {
+                            this.$notify({
+                                title: 'お知らせ',
+                                message: this.$createElement('p', {style: 'color: #900'}, JSON.stringify(data)),
+                                duration: 2000
+                            })
                         })
-                    })
+                    }
                 });
             },
-
             update() {
                 const formData = new FormData();
                 formData.append('name', this.form.name);
@@ -110,10 +106,8 @@
                     if (file) {
                         formData.append('src', file);
                     }
-
                 }
                 formData.append('parent', this.form.parent);
-
                 this.$http(this.$endpoint + this.selected.data.pk + '/', {
                     credentials: "include",
                     method: 'PATCH',
@@ -130,19 +124,18 @@
                                 duration: 2000
                             })
                             this.$emit('done')
-
+                        })
+                    } else {
+                        return response.json().then(data => {
+                            this.$notify({
+                                title: 'お知らせ',
+                                message: this.$createElement('p', {style: 'color: #900'}, JSON.stringify(data)),
+                                duration: 2000
+                            })
                         })
                     }
-                    return response.json().then(data => {
-                        this.$notify({
-                            title: 'お知らせ',
-                            message: this.$createElement('p', {style: 'color: #900'}, JSON.stringify(data)),
-                            duration: 2000
-                        })
-                    })
                 });
             },
-
             remove() {
                 this.$http(this.$endpoint + this.selected.data.pk + '/', {
                     credentials: "include",
@@ -158,7 +151,6 @@
                             duration: 2000
                         })
                         this.$emit('done')
-
                     } else {
                         return response.json().then(data => {
                             this.$notify({
@@ -211,12 +203,10 @@
         color: #fff;
         border: solid 1px #0366d6;
         vertical-align: bottom;
-
         box-sizing: border-box;
         display: inline-block;
         text-decoration: none;
         text-align: center;
-
         cursor: pointer;
     }
 
@@ -225,9 +215,8 @@
     }
 
     .button-link {
-border: none;
-background: none;
-color: #000;
+        border: none;
+        background: none;
+        color: #000;
     }
-
 </style>
