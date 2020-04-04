@@ -27,3 +27,18 @@ def get_composite(request_path):
         raise Http404
     else:
         return composite
+
+
+def walk_and_write_zip(composite, zip_file, count, dir_name=''):
+    """再帰的にCompositeを走査し、zipファイルに書き込んでいく"""
+    dirs = []
+    for composite in composite.composite_set.all():
+        if composite.is_dir:
+            dirs.append(composite)
+        else:
+            zip_file.writestr(dir_name + composite.name, composite.src.read())
+    count -= 1
+
+    if count:
+        for composite in dirs:
+            walk_and_write_zip(composite, zip_file, count, f'{dir_name}{composite.name}/')

@@ -4,27 +4,28 @@
         <div id="list">
             <!-- 親ディレクトリの表示 -->
             <div v-if="current.parent" class="parent composite-wrapper" :key="current.parent.pk">
-                <p class="composite" @click="moveBefore">{{ current.parent.name }}</p>
+                <Composite :data="current.parent" @click="moveBefore"></Composite>
             </div>
             <div v-else-if="current.pk" class="parent composite-wrapper" :key="-1">
-                <p class="composite" @click="moveBefore">home</p>
+                <Composite :data="{name: 'home', is_dir: 'true'}" @click="moveBefore"></Composite>
             </div>
 
             <!-- カレントディレクトリの表示 -->
-            <button type="button" @click="createFile">ファイル作成</button>
-            <button type="button" @click="createDir">ディレクトリ作成</button>
             <div v-if="current.pk" class="current composite-wrapper" :key="current.pk">
-                <p class="composite">{{ current.name }}</p>
+                <Composite :data="current" :editableIn="true" @createDir="createDir"
+                           @createFile="createFile"></Composite>
             </div>
             <div v-else class="current composite-wrapper" :key="-1">
-                <p class="composite">home</p>
+                <Composite :data="{name: 'home', is_dir: 'true'}" :editableIn="true" @createDir="createDir"
+                           @createFile="createFile"></Composite>
             </div>
 
             <!-- 子ファイル・ディレクトリの表示 -->
             <div class="child composite-wrapper" v-for="composite of current.composite_set" :key="composite.pk">
-                <p class="composite" @click="move(composite)">{{ composite.name }}</p>
-                <button type="button" @click="update(composite)">更新</button>
-                <button type="button" @click="remove(composite)">削除</button>
+                <Composite :data="composite"
+                           @click="move" @remove="remove"
+                           @update="update" @zip="zip" :editable="true"></Composite>
+
             </div>
         </div>
 
@@ -33,16 +34,18 @@
                             :key="selected.type + '-' + selected.data.pk"></composite-form>
         </div>
 
+
     </section>
 </template>
 
 <script>
+    import Composite from "./Composite.vue";
     import CompositeForm from "./CompositeForm"
 
     export default {
         name: 'composite-list',
         components: {
-            CompositeForm
+            Composite, CompositeForm
         },
         props: {
             path: {type: String},
@@ -141,17 +144,17 @@
                 this.selected.data = composite
                 this.selected.type = 'delete'
             },
-            createFile() {
+            createFile(composite) {
                 this.selected.data = {
                     is_dir: false,
-                    parent: this.current.pk ? this.current.pk : '',
+                    parent: composite.pk ? composite.pk : '',
                 }
                 this.selected.type = 'new'
             },
-            createDir() {
+            createDir(composite) {
                 this.selected.data = {
                     is_dir: true,
-                    parent: this.current.pk ? this.current.pk : '',
+                    parent: composite.pk ? composite.pk : '',
                 }
                 this.selected.type = 'new'
             },
@@ -164,7 +167,10 @@
                     this.getCompositeListTop()
                 }
             },
-            close() {
+            zip(composite) {
+                window.open(`/uploader/zip/${composite.pk}`, '_blank');
+            },
+           close() {
                 this.selected.data = {}
                 this.selected.type = null
             }
